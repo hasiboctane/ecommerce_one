@@ -7,7 +7,7 @@ const UserController = {
     getAll: async (req, res) => {
         res.send("hello world Controller");
     },
-    create: asyncHandler(async (req, res) => {
+    createUser: asyncHandler(async (req, res) => {
         const { username, email, password } = req.body;
         if (!username || !email || !password) {
             throw new Error("All fields are required");
@@ -33,7 +33,37 @@ const UserController = {
             res.status(400);
             throw new Error("Error while creating user");
         }
-    })
+    }),
+    loginUser: asyncHandler(async (req, res) => {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            throw new Error("All fields are required");
+        }
+        const userExists = await User.findOne({ email });
+        if (!userExists) {
+            return res.status(404).send({ message: "Credentials do not match" });
+        }
+        const isPasswordValid = await bcrypt.compare(password, userExists.password);
+        if (!isPasswordValid) {
+            return res.status(401).send({ message: "Invalid password" });
+        }
+        generateToken(res, userExists._id);
+        return res.status(200).send({
+            message: "User logged in successfully",
+            data: {
+                _id: userExists._id,
+                username: userExists.username,
+                email: userExists.email,
+                isAdmin: userExists.isAdmin
+            }
+        });
+    }),
+    logoutCurrentUser: asyncHandler(async (req, res) => {
+        res.status(200).clearCookie("token").send({
+            message: "User logged out successfully"
+        });
+    }),
+
 }
 
 
