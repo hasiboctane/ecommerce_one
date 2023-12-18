@@ -4,9 +4,14 @@ import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 const UserController = {
 
-    getAll: async (req, res) => {
-        res.send("hello world Controller");
-    },
+    getAll: asyncHandler(async (req, res) => {
+        const users = await User.find({}).select("-password");
+        if (!users) {
+            res.status(404);
+            throw new Error("No users found");
+        }
+        res.status(200).send(users);
+    }),
     createUser: asyncHandler(async (req, res) => {
         const { username, email, password } = req.body;
         if (!username || !email || !password) {
@@ -63,6 +68,81 @@ const UserController = {
             message: "User logged out successfully"
         });
     }),
+
+    getCurrentUserProfile: asyncHandler(async (req, res) => {
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            res.status(404);
+            throw new Error("User not found");
+        }
+        res.status(200).send({
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+        })
+    }),
+    updateCurrentUserProfile: asyncHandler(async (req, res) => {
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            res.status(404);
+            throw new Error("User not found");
+        }
+        user.username = req.body.username || user.username;
+        user.email = req.body.email || user.email;
+        if (req.body.password) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(req.body.password, salt);
+            user.password = hashedPassword;
+        }
+        const updatedUser = await user.save();
+        res.status(200).send({
+            _id: updatedUser._id,
+            username: updatedUser.username,
+            email: updatedUser.email,
+            isAdmin: updatedUser.isAdmin
+        })
+    }),
+    deleteUserById: asyncHandler(async (req, res) => {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).send({ message: "User not found" });
+            // throw new Error("User not found");
+        }
+        if (user.isAdmin) {
+            return res.status(401).send({ message: "Cannot delete an admin" });
+        }
+        await User.deleteOne({ _id: user._id });
+        res.status(200).send({ message: "User deleted successfully" });
+
+    }),
+    getUserById: asyncHandler(async (req, res) => {
+        const user = await User.findById(req.params.id).select("-password");
+        if (!user) {
+            return res.status(404).send({ message: "User not found" });
+        }
+        res.status(200).send({
+            user
+        })
+    }),
+    updateUserById: asyncHandler(async (req, res) => {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).send({ message: "User not found" });
+        }
+        if (user.isAdmin) {
+            return res.status(401).send({ message: "Cannot update an admin" });
+        }
+        user.username = req.body.username || user.username;
+        user.email = req.body.email || user.email;
+        user.isAdmin = Boolean(req.body.isAdmin) || user.isAdmin;
+        const updatedUser = await user.save();
+        res.status(200).send({
+            _id: updatedUser._id,
+            username: updatedUser.username,
+            email: updatedUser.email,
+            isAdmin: updatedUser.isAdmin
+        })
+    })
 
 }
 
