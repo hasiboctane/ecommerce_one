@@ -8,6 +8,7 @@ import Loader from "../../components/Loader";
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [login, { isLoading }] = useLoginMutation();
@@ -24,16 +25,16 @@ const Login = () => {
         e.preventDefault()
         try {
             const res = await login({ email, password }).unwrap();
-            dispatch(setCredentials({ ...res }));
+            await dispatch(setCredentials({ ...res }));
         } catch (error) {
             toast.error(error?.data?.message || error.message);
         }
     }
     return (
-        <div>
-            <section className="pl-[10rem] flex flex-wrap">
+        <div className="">
+            <section className="pl-[15rem] flex flex-wrap">
                 <div className="mr-[4rem] mt-[5rem]">
-                    <h1 className="text-2xl font-semibold mb-4"> Sign in</h1>
+                    <h1 className="text-2xl font-semibold mb-4 underline"> Log in</h1>
                     <form onSubmit={submitHandler} className="container w-[40rem]">
                         <div className="my-[2rem]">
                             <label
@@ -50,20 +51,21 @@ const Login = () => {
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
-                        <div className="my-[2rem]">
+                        <div className="my-[2rem] relative">
                             <label
                                 htmlFor="password"
                                 className="block text-sm text-white font-medium"
                             >Password</label>
                             <input
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 name="password"
                                 id="password"
-                                className="mt-1 p-2 border rounded w-full"
+                                className="mt-1 p-2 border rounded w-full "
                                 placeholder="Enter your password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
+
                         </div>
                         <button
                             disabled={isLoading}
