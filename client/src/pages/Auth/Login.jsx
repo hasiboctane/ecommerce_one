@@ -5,6 +5,7 @@ import { useLoginMutation } from "../../redux/api/userApiSlice";
 import { setCredentials } from "../../redux/features/auth/authSlice";
 import { toast } from "react-toastify";
 import Loader from "../../components/Loader";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -26,6 +27,7 @@ const Login = () => {
         try {
             const res = await login({ email, password }).unwrap();
             await dispatch(setCredentials({ ...res }));
+            toast.success("User logged in successfully");
         } catch (error) {
             toast.error(error?.data?.message || error.message);
         }
@@ -56,15 +58,29 @@ const Login = () => {
                                 htmlFor="password"
                                 className="block text-sm text-white font-medium"
                             >Password</label>
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                name="password"
-                                id="password"
-                                className="mt-1 p-2 border rounded w-full "
-                                placeholder="Enter your password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    name="password"
+                                    id="password"
+                                    className="mt-1 p-2 border rounded w-full "
+                                    placeholder="Enter your password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                                {
+                                    showPassword ?
+                                        <FaEyeSlash
+                                            className="absolute right-4 top-4 cursor-pointer"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                        /> :
+
+                                        <FaEye
+                                            className="absolute right-4 top-4 cursor-pointer"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                        />
+                                }
+                            </div>
 
                         </div>
                         <button

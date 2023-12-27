@@ -4,12 +4,14 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setCredentials } from "../../redux/features/auth/authSlice";
 import { useRegisterMutation } from "../../redux/api/userApiSlice";
 import { toast } from "react-toastify";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Loader from "../../components/Loader";
 const Registration = () => {
     const [username, setUserName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -27,6 +29,18 @@ const Registration = () => {
 
     const submitHandler = async (e) => {
         e.preventDefault();
+        if (password !== confirmPassword) {
+            toast.error("Passwords does not match")
+        } else {
+            try {
+                const res = await register({ username, email, password }).unwrap();
+                await dispatch(setCredentials({ ...res }));
+                navigate(redirect);
+                toast.success("User successfully registered")
+            } catch (error) {
+                toast.error(error?.data?.message || error.message);
+            }
+        }
     }
     return (
         <section className="pl-[15rem] flex flex-wrap">
@@ -66,14 +80,27 @@ const Registration = () => {
                             htmlFor="password"
                             className="block text-sm text-white font-medium"
                         >Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            className="mt-1 p-2 border rounded w-full"
-                            placeholder="Enter your password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                id="password"
+                                className="mt-1 p-2 border rounded w-full"
+                                placeholder="Enter your password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            {
+                                showPassword ?
+                                    <FaEyeSlash
+                                        className="absolute right-4 top-4 cursor-pointer"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    /> :
+                                    <FaEye
+                                        className="absolute right-4 top-4 cursor-pointer"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    />
+                            }
+                        </div>
                     </div>
                     <div className="my-[2rem]">
                         <label
@@ -81,7 +108,7 @@ const Registration = () => {
                             className="block text-sm text-white font-medium"
                         >Confirm Password</label>
                         <input
-                            type="confirmPassword"
+                            type="text"
                             id="confirmPassword"
                             className="mt-1 p-2 border rounded w-full"
                             placeholder="Confirm your password"

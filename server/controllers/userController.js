@@ -96,10 +96,13 @@ const UserController = {
         }
         const updatedUser = await user.save();
         res.status(200).send({
-            _id: updatedUser._id,
-            username: updatedUser.username,
-            email: updatedUser.email,
-            isAdmin: updatedUser.isAdmin
+            message: "User updated successfully",
+            data: {
+                _id: updatedUser._id,
+                username: updatedUser.username,
+                email: updatedUser.email,
+                isAdmin: updatedUser.isAdmin
+            }
         })
     }),
     deleteUserById: asyncHandler(async (req, res) => {
