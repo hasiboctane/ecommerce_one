@@ -9,14 +9,21 @@ import Login from './pages/Auth/Login.jsx'
 import Registration from './pages/Auth/Registration.jsx'
 import PrivateRoute from './components/PrivateRoute.jsx'
 import Profile from './pages/User/Profile.jsx'
+import AdminRoute from './pages/Admin/AdminRoute.jsx'
+import UserList from './pages/Admin/UserList.jsx'
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<App />}>
+      <Route path='/login' element={<Login />} />
+      {/* Auth User Route */}
+      <Route path='/register' element={<Registration />} />
       <Route path='' element={<PrivateRoute />}>
         <Route path='/profile' element={<Profile />} />
       </Route>
-      <Route path='/login' element={<Login />} />
-      <Route path='/register' element={<Registration />} />
+      {/* Admin Route */}
+      <Route path='/admin' element={<AdminRoute />}>
+        <Route path='user-list' element={<UserList />} />
+      </Route>
     </Route>
   )
 )

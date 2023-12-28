@@ -7,10 +7,12 @@ const UserController = {
     getAll: asyncHandler(async (req, res) => {
         const users = await User.find({}).select("-password");
         if (!users) {
-            res.status(404);
-            throw new Error("No users found");
+            res.status(404).send({
+                message: "No users found"
+            });
         }
-        res.status(200).send(users);
+        res.status(200).send(users)
+
     }),
     createUser: asyncHandler(async (req, res) => {
         const { username, email, password } = req.body;
@@ -76,9 +78,11 @@ const UserController = {
             throw new Error("User not found");
         }
         res.status(200).send({
-            _id: user._id,
-            username: user.username,
-            email: user.email,
+            data: {
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+            }
         })
     }),
     updateCurrentUserProfile: asyncHandler(async (req, res) => {
@@ -124,7 +128,7 @@ const UserController = {
             return res.status(404).send({ message: "User not found" });
         }
         res.status(200).send({
-            user
+            data: user
         })
     }),
     updateUserById: asyncHandler(async (req, res) => {
@@ -140,10 +144,13 @@ const UserController = {
         user.isAdmin = Boolean(req.body.isAdmin) || user.isAdmin;
         const updatedUser = await user.save();
         res.status(200).send({
-            _id: updatedUser._id,
-            username: updatedUser.username,
-            email: updatedUser.email,
-            isAdmin: updatedUser.isAdmin
+            message: "Updated User Successfully",
+            data: {
+                _id: updatedUser._id,
+                username: updatedUser.username,
+                email: updatedUser.email,
+                isAdmin: updatedUser.isAdmin
+            }
         })
     })
 
