@@ -13,7 +13,7 @@ const userApiSlice = apiSlice.injectEndpoints({
         }),
         logout: builder.mutation({
             query: () => ({
-                url: `${CONSTANTS.USERS_URL}/logout`,
+                url: `/${CONSTANTS.USERS_URL}/logout`,
                 method: "POST"
             }),
         }),
@@ -52,7 +52,7 @@ const userApiSlice = apiSlice.injectEndpoints({
         }),
         updateUser: builder.mutation({
             query: (data) => ({
-                url: `${CONSTANTS.USERS_URL}/${data.userId}`,
+                url: `/${CONSTANTS.USERS_URL}/${data.userId}`,
                 method: "PUT",
                 body: data
             }),

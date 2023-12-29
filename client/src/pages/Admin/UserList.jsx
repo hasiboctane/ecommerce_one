@@ -29,6 +29,26 @@ const UserList = () => {
             }
         }
     }
+
+    const toggleEdit = (id, username, email) => {
+        setEditableUserId(id);
+        setEditableUserName(username);
+        setEditableUserEmail(email);
+    }
+    const updateHandler = async (id) => {
+        try {
+            await updateUser({
+                userId: id,
+                username: editableUserName,
+                email: editableUserEmail
+            }).unwrap();
+            setEditableUserId(null);
+            refetch()
+            toast.success('User updated successfully')
+        } catch (error) {
+            toast.error(error?.data?.message || error.error)
+        }
+    }
     return (
         <div className='p-4'>
             {isLoading ?
@@ -72,12 +92,16 @@ const UserList = () => {
                                                     </div>) : (
                                                         <div className='flex items-center'>
                                                             {user.username} {" "}
-                                                            <button
-                                                                onClick={() => toggleEdit(user._id, user.username, user.email)}
+                                                            {
+                                                                !user.isAdmin && (
+                                                                    <button
+                                                                        onClick={() => toggleEdit(user._id, user.username, user.email)}
 
-                                                            >
-                                                                <FaEdit className='ml-[1rem]' />
-                                                            </button>
+                                                                    >
+                                                                        <FaEdit className='ml-[1rem]' />
+                                                                    </button>
+                                                                )
+                                                            }
                                                         </div>
                                                     )
                                                 }
@@ -100,12 +124,16 @@ const UserList = () => {
                                                     </div>) : (
                                                         <div className='flex items-center'>
                                                             {user.email} {" "}
-                                                            <button
-                                                                onClick={() => toggleEdit(user._id, user.username, user.email)}
+                                                            {
+                                                                !user.isAdmin && (
+                                                                    <button
+                                                                        onClick={() => toggleEdit(user._id, user.username, user.email)}
 
-                                                            >
-                                                                <FaEdit className='ml-[1rem]' />
-                                                            </button>
+                                                                    >
+                                                                        <FaEdit className='ml-[1rem]' />
+                                                                    </button>
+                                                                )
+                                                            }
                                                         </div>
                                                     )
                                                 }

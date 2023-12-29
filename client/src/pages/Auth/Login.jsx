@@ -71,12 +71,12 @@ const Login = () => {
                                 {
                                     showPassword ?
                                         <FaEyeSlash
-                                            className="absolute right-4 top-4 cursor-pointer"
+                                            className="absolute right-4 top-4 cursor-pointer text-black"
                                             onClick={() => setShowPassword(!showPassword)}
                                         /> :
 
                                         <FaEye
-                                            className="absolute right-4 top-4 cursor-pointer"
+                                            className="absolute right-4 top-4 cursor-pointer text-black"
                                             onClick={() => setShowPassword(!showPassword)}
                                         />
                                 }
