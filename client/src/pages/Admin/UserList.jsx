@@ -39,8 +39,10 @@ const UserList = () => {
         try {
             await updateUser({
                 userId: id,
-                username: editableUserName,
-                email: editableUserEmail
+                updatedUser: {
+                    username: editableUserName,
+                    email: editableUserEmail
+                }
             }).unwrap();
             setEditableUserId(null);
             refetch()

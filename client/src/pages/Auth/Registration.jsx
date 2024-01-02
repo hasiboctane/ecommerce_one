@@ -53,7 +53,7 @@ const Registration = () => {
                             className="block text-sm text-white font-medium"
                         >Name</label>
                         <input
-                            type="name"
+                            type="text"
                             id="name"
                             className="mt-1 p-2 border rounded w-full"
                             placeholder="Enter your Name"
