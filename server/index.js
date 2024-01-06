@@ -29,7 +29,9 @@ app.use(errorhandler);
 // server and database connection
 const port = process.env.PORT || 8000;
 const dbUrl = process.env.MONGODB_URL || 'mongodb://localhost:27017/'
+const dbUrlLocal = 'mongodb://localhost:27017/'
 app.listen(port, () => {
     console.log(`Server running on: http://localhost:${port}`);
     connectDB(dbUrl)
+    // connectDB(dbUrlLocal)
 });
